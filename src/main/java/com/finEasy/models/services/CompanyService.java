@@ -18,5 +18,9 @@ public class CompanyService {
         return companyRepository.save(company);
     }
 
+    public Company getCompanyById(long companyId){
+
+     return companyRepository.getById(companyId);
+    }
 
 }

@@ -6,5 +6,11 @@ import lombok.Data;
 public class CustomerAcquisitionCost {
 
     private double cac;
-    private double mmc;
+    private double monthlyMarketingCost;
+
+    private double projectedNumberOfCustomersMonthly;
+
+    private double growthRate;
+
+
 }

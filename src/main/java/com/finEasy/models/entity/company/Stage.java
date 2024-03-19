@@ -1,4 +1,4 @@
-package com.finEasy.models.entity;
+package com.finEasy.models.entity.company;
 
 public enum Stage {
     EARLY_STAGE,
