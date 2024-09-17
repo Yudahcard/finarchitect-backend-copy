@@ -1,20 +1,18 @@
-package com.finEasy.models.controller;
+package com.finEasy.controller;
 
 
-import com.finEasy.models.entity.MarketingDetails.MarketingDetails;
 import com.finEasy.models.entity.MarketingDetails.MarketingDetailsRequest;
 import com.finEasy.models.entity.Product;
 import com.finEasy.models.entity.company.Company;
 import com.finEasy.models.entity.company.CompanyResponse;
-import com.finEasy.models.services.CompanyService;
-import com.finEasy.models.services.MarketingDetailsService;
+import com.finEasy.services.CompanyService;
+import com.finEasy.services.MarketingDetailsService;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -102,4 +100,6 @@ public class companyController {
       return new ResponseEntity<>(HttpStatus.OK);
 
     }
+
+
 }

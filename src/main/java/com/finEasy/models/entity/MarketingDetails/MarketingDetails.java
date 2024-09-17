@@ -13,20 +13,19 @@ import java.util.List;
 @Entity
 public class MarketingDetails {
 
-    public MarketingDetails(double monthlyMarketingCost, int projectedMonthlyCustomers, double growthRate) {
+    public MarketingDetails(int monthlyMarketingCost, int projectedMonthlyCustomers, int cac) {
         this.monthlyMarketingCost = monthlyMarketingCost;
         this.projectedMonthlyCustomers = projectedMonthlyCustomers;
-        this.growthRate = growthRate;
-//        this.products = products;
+    }
+
+    public MarketingDetails() {
+
     }
 
 
+    private Integer monthlyMarketingCost;
+    private Integer projectedMonthlyCustomers;
+    private Integer cac;
 
-    @Id
-    private int companyId;
-    private double monthlyMarketingCost; // MMC
-    private int projectedMonthlyCustomers;
-    private double growthRate;
-//    private List<Product> products;
 
 }

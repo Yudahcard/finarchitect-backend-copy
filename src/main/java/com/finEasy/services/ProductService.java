@@ -1,4 +1,4 @@
-package com.finEasy.models.services;
+package com.finEasy.services;
 
 import com.finEasy.models.entity.Product;
 import com.finEasy.models.repository.ProductRepository;

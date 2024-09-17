@@ -23,6 +23,8 @@ public class Company {
     private String size;
     private Stage stage;
 
+
+
 //    private MarketingDetails marketingDetails;
 
 }
