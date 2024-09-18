@@ -17,4 +17,5 @@ public interface MarketingCalculatorService {
 //    public Map<String, Double> getProspectiveProjectedMonthlyOfCustomersOnLine(List<Product> products, double monthlyCustomers);
 
     public Map<String, Double> getCalculateCustomerAcquisitionCost(List<Product> products, double monthlyCustomers);
+
 }
