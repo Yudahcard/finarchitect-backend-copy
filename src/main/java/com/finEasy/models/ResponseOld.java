@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-public class Response {
+public class ResponseOld {
 
     private String responseCode;
     private String responseMessage;

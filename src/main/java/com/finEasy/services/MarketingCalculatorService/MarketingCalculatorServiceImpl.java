@@ -1,14 +1,8 @@
 package com.finEasy.services.MarketingCalculatorService;
 
-import com.finEasy.models.Response;
-import com.finEasy.models.entity.MarketingDetails.MarketingDetails;
-import com.finEasy.models.entity.MarketingDetails.MarketingOutput;
-import com.finEasy.models.entity.MarketingDetails.MonthlyProjection;
 import com.finEasy.models.entity.Product;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 

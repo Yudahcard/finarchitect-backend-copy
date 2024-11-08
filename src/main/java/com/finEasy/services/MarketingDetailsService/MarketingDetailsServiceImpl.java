@@ -2,6 +2,7 @@ package com.finEasy.services.MarketingDetailsService;
 
 
 import com.finEasy.models.entity.MarketingDetails.MarketingDetails;
+import com.finEasy.models.entity.MarketingDetails.MarketingModelInput;
 import com.finEasy.models.entity.Product;
 import com.finEasy.models.repository.MarketingDetailsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,9 +18,9 @@ public class MarketingDetailsServiceImpl implements MarketingDetailsService{
     @Autowired
     public MarketingDetailsRepository marketingDetailsRepository;
 
-    public void SaveMarketingDetails(MarketingDetails marketingDetails){
+    public void saveMarketingDetails(MarketingModelInput marketingModelInput){
 
-        marketingDetailsRepository.save(marketingDetails);
+        marketingDetailsRepository.save(marketingModelInput);
     }
 
 
