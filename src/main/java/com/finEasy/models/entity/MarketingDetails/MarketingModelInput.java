@@ -8,7 +8,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MarketingModelInput {
+
+    private int companyId;
+
+    private int customerId;
     private Double yearlyMarketingCost;
     private Double cac;
     private Double customerGrowthRate;
+
+
 }

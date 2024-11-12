@@ -2,6 +2,7 @@ package com.finEasy.controller;
 
 
 import com.finEasy.models.entity.MarketingDetails.MarketingDetailsRequest;
+import com.finEasy.models.entity.MarketingDetails.MarketingModelInput;
 import com.finEasy.models.entity.Product;
 import com.finEasy.models.entity.company.Company;
 import com.finEasy.models.entity.company.CompanyResponse;
@@ -81,10 +82,13 @@ public class companyController {
     @RequestMapping(value= "/addMarketingDetails", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> addMarketingDetails(@RequestBody String request, HttpServletRequest httpServletRequest) throws Exception{
 
-        MarketingDetailsRequest marketingDetailsRequest = new Gson().fromJson(request, MarketingDetailsRequest.class);
+//        MarketingDetailsRequest marketingDetailsRequest = new Gson().fromJson(request, MarketingDetailsRequest.class);
 
-        Company companyTobeUpdated = companyService.getCompanyById(marketingDetailsRequest.getCompanyId());
+        MarketingModelInput marketingModelInput = new Gson().fromJson(request,MarketingModelInput.class);
 
+//        Company companyTobeUpdated = companyService.getCompanyById(marketingDetailsRequest.getCompanyId());
+
+//        Company companyTobeUpdated = companyService.getCompanyById(marketingModelInput.getCompanyId());
 
 
         List<Product> products = new ArrayList<Product>();
@@ -95,7 +99,9 @@ public class companyController {
         //ways we can do this, we can get token then create a method that uses the token, we can get company Id, we can get username of logged-in user.
         // update marketing details table with request
 
-        marketingDetailsServiceImpl.SaveMarketingDetails(marketingDetailsRequest.getMarketingDetails());
+//        marketingDetailsServiceImpl.SaveMarketingDetails(marketingDetailsRequest.getMarketingDetails());
+
+        marketingDetailsServiceImpl.saveMarketingDetails(marketingModelInput);
 
       return new ResponseEntity<>(HttpStatus.OK);
 
