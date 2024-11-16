@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.finEasy.exceptions.BadHeaderValuesException;
 import com.finEasy.exceptions.MissingHeaderException;
 import com.finEasy.models.Credentials;
-import com.finEasy.models.Response;
+import com.finEasy.models.ResponseOld;
 import com.finEasy.models.utilities.cryptography.RsaAesStandard;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,10 +74,10 @@ public class EncryptionService {
         } catch (Exception e) {
             e.printStackTrace();
             log.error(e.getMessage());
-            Response response = new Response();
-            response.setResponseCode("99");
-            response.setResponseMessage("An error occurred while decrypting response");
-            return (T) response;
+            ResponseOld responseOld = new ResponseOld();
+            responseOld.setResponseCode("99");
+            responseOld.setResponseMessage("An error occurred while decrypting response");
+            return (T) responseOld;
         }
         log.info("decrypted value : {}", decryptedValue);
         return decryptedValue;

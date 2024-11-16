@@ -1,9 +1,5 @@
 package com.finEasy.services.MarketingCalculatorService;
 
-import com.finEasy.models.Response;
-import com.finEasy.models.entity.MarketingDetails.MarketingDetails;
-import com.finEasy.models.entity.MarketingDetails.MarketingOutput;
-import com.finEasy.models.entity.MarketingDetails.MonthlyProjection;
 import com.finEasy.models.entity.Product;
 
 import java.util.List;

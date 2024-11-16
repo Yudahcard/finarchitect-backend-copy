@@ -1,152 +1,111 @@
 package com.finEasy.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.finEasy.models.Response;
-import com.finEasy.models.entity.MarketingDetails.MarketingDetails;
-import com.finEasy.models.utilities.EncryptionService;
-import com.finEasy.models.utilities.ResponseEnum;
+import com.finEasy.models.ResponseOld;
+import com.finEasy.models.entity.MarketingDetails.MarketingModelInput;
+import com.finEasy.models.entity.MarketingDetails.MarketingModelOutput;
+import com.finEasy.models.entity.MarketingDetails.MarketingModelResponse;
 import com.finEasy.services.MarketingDetailsService.MarketingDetailsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
-@RequestMapping("api/fin-architect")
+@RequestMapping("api/marketing")
 public class MarketingModelController {
 
-        private final static Logger logger = LoggerFactory.getLogger(MarketingModelController.class);
+    private final static Logger logger = LoggerFactory.getLogger(MarketingModelController.class);
+    private final static ObjectMapper objectMapper = new ObjectMapper();
 
-        private final static ObjectMapper objectMapper = new ObjectMapper();
+    @Autowired
+    private MarketingDetailsService marketingDetailServiceImpl;
 
-        @Autowired
-        private MarketingDetailsService marketingDetailServiceImpl;
+    @PostMapping(value = "/calculateMarketingMetrics", consumes = "text/plain", produces = "text/plain")
+    public ResponseEntity<String> calculateMarketingMetrics(@RequestBody String request,
+                                                            final HttpServletRequest httpServletRequest) {
 
-        @Autowired
-        EncryptionService encryptionService;
+        logger.info("Incoming request: {}", request);
+//        ResponseOld responseOld = new ResponseOld();
 
-
-
-        @PostMapping(value = "/marketingModelEndPoint", consumes = "text/plain", produces = "text/plain")
-        public ResponseEntity<String> marketingModelEndPoint(@RequestBody String requests, final HttpServletRequest httpServletRequest){
-
-            logger.info("request===" + requests);
-
-            Response response = new Response();
-
-            String sourcecode = httpServletRequest.getHeader("x-source-code");
-
-            MarketingDetails marketingModelDetails = new MarketingDetails();
-
-            int onlineCac;
-
-            try {
-                marketingModelDetails = objectMapper.readValue(requests,MarketingDetails.class);
-            } catch (JsonProcessingException e) {
-
-                e.printStackTrace();
-                logger.error(e.getMessage());
-//                throw new RuntimeException(e);
-            }
-// instance one
-            if(((marketingModelDetails.getMonthlyMarketingCost()== null ) && (marketingModelDetails.getProjectedMonthlyCustomers() == null))){
-
-                onlineCac = marketingDetailServiceImpl.getCustomerAcquisitionCostOnline("productOrCompany");
-
-                marketingModelDetails.setCac(onlineCac);
-
-                response.setMarketingDetails(marketingModelDetails);
-
-                // save the marketing details to marketing details table
-                marketingDetailServiceImpl.SaveMarketingDetails(marketingModelDetails);
-
-
-            } else if ((marketingModelDetails.getMonthlyMarketingCost() != null) &&(marketingModelDetails.getProjectedMonthlyCustomers() == null) && (marketingModelDetails.getCac() == null)) {
-
-                onlineCac = marketingDetailServiceImpl.getCustomerAcquisitionCostOnline("productOrCompany");
-
-                marketingModelDetails.setCac(onlineCac);
-
-                marketingModelDetails.setProjectedMonthlyCustomers(marketingModelDetails.getMonthlyMarketingCost()/onlineCac);
-
-                response.setMarketingDetails(marketingModelDetails);
-
-                // save the marketing details to marketing details table
-                marketingDetailServiceImpl.SaveMarketingDetails(marketingModelDetails);
-
-            }
-
-
-            //   return ResponseEntity.ok(encryptionService.encrypt(response, sourcecode));
-            return ResponseEntity.ok(response.toString());
-        }
-
-
-
-
-    public ResponseEntity<String> getMarketingModelOutput(@RequestBody String request,final HttpServletRequest httpServletRequest)
-            throws Exception {
-        String sourcecode = httpServletRequest.getHeader("x-source-code");
-        Response response = new Response();
-
-
-        MarketingDetails marketingDetails = new MarketingDetails();
-
+        MarketingModelResponse response = new MarketingModelResponse();
 
         try {
+            // Parse input model
+            MarketingModelInput inputModel = objectMapper.readValue(request, MarketingModelInput.class);
 
-//            response = marketingCalculatorServiceImpl.getCustomerAcquisitionCostOnline("productOrCompany");
-        } catch (Exception ex) {
-            logger.error("Operation Failed", ex);
+            // Validate required inputs
+            if (inputModel.getYearlyMarketingCost() == null ||
+                    inputModel.getCac() == null ||
+                    inputModel.getCustomerGrowthRate() == null) {
 
+                response.setResponseCode("400");
+                response.setResponseMessage("Missing required inputs");
+                return ResponseEntity.badRequest().body(response.toString());
+            }
+
+            // Create output model and perform calculations
+            MarketingModelOutput outputModel = calculateMetrics(inputModel);
+
+            response.setResponseCode("00");
+            response.setResponseMessage("Success");
+            response.setMarketingOutput(outputModel);
+
+            // Save both input and output models
+            marketingDetailServiceImpl.saveMarketingDetails(inputModel);
+
+        } catch (JsonProcessingException e) {
+            logger.error("Error processing request", e);
             response.setResponseCode("99");
-            response.setResponseMessage(ResponseEnum.RECORD_NOT_FOUND.toString());
-//            return ResponseEntity.ok(encryptionService.encrypt(response, sourcecode));
-            return ResponseEntity.ok(response.toString());
+            response.setResponseMessage("Error processing request: " + e.getMessage());
+            return ResponseEntity.internalServerError().body(response.toString());
 
         }
-//        return ResponseEntity.ok(encryptionService.encrypt(response, sourcecode));
+
         return ResponseEntity.ok(response.toString());
     }
 
+    private MarketingModelOutput calculateMetrics(MarketingModelInput input) {
+        MarketingModelOutput output = new MarketingModelOutput();
 
+        // Calculate monthly marketing cost
+        double monthlyMarketingCost = input.getYearlyMarketingCost() / 12.0;
+        output.setMonthlyMarketingCost(monthlyMarketingCost);
 
+        // Calculate initial converted customers (Month 1)
+        double initialConvertedCustomers = monthlyMarketingCost / input.getCac();
+        output.setInitialConvertedCustomers(initialConvertedCustomers);
 
+        // Calculate customer growth for months 2-12
+        Map<Integer, Double> monthlyCustomers = new HashMap<>();
+        monthlyCustomers.put(1, initialConvertedCustomers);
 
+        double growthRate = input.getCustomerGrowthRate() / 100.0; // Convert percentage to decimal
 
-    public ResponseEntity<String> getCacOnline()
-            throws Exception {
-//        String sourcecode = httpServletRequest.getHeader("x-source-code");
-        Response response = new Response();
-
-        int onlineCac;
-
-
-        try {
-
-//            response = marketingCalculatorServiceImpl.getCustomerAcquisitionCostOnline("productOrCompany");
-            onlineCac = marketingDetailServiceImpl.getCustomerAcquisitionCostOnline("productOrCompany");
-
-        } catch (Exception ex) {
-            logger.error("Operation Failed", ex);
-
-            response.setResponseCode("99");
-            response.setResponseMessage(ResponseEnum.RECORD_NOT_FOUND.toString());
-            return ResponseEntity.ok(response.toString());
-
+        for (int month = 2; month <= 12; month++) {
+            double previousMonthCustomers = monthlyCustomers.get(month - 1);
+            double currentMonthCustomers = previousMonthCustomers * (1 + growthRate);
+            monthlyCustomers.put(month, currentMonthCustomers);
         }
-        return ResponseEntity.ok(response.toString());
+
+        output.setMonthlyCustomerGrowth(monthlyCustomers);
+
+        // Calculate total customers for the year
+        double totalCustomers = monthlyCustomers.values().stream()
+                .mapToDouble(Double::doubleValue)
+                .sum();
+        output.setTotalYearlyCustomers(totalCustomers);
+
+        return output;
     }
-
-
-
-
-
-
-    }
-
+}
