@@ -1,13 +1,16 @@
-package com.finEasy.models.User;
+package com.finEasy.models.customer;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
 
 @Entity
-@Table(name = "user")
+//@Table(name = "customer")
+@Table(name = "daouser")
 @Data
+@Component
 public class DAOUser {
 
     @Id

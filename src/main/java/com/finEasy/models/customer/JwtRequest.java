@@ -1,4 +1,4 @@
-package com.finEasy.models.User;
+package com.finEasy.models.customer;
 
 import lombok.Data;
 
